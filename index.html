@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppleCore-Store — магазин iPhone</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        appleDark: '#0a0a0c',
+                        cardDark: '#141418',
+                        accentBlue: '#0071e3',
+                        accentGlow: '#2997ff',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0c;
+            color: #f5f5f7;
+        }
+        .glow-effect {
+            box-shadow: 0 0 40px -10px rgba(41, 151, 255, 0.25);
+        }
+        .glass-nav {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(41, 151, 255, 0.2);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #26262b;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-appleDark text-slate-100 antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-32 opacity-0 transition-all duration-300 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toast-message" class="font-medium">Товар добавлен в корзину!</span>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-nav border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i class="fa-brands fa-apple text-2xl text-white"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                    AppleCore-Store
+                </span>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#catalog" class="hover:text-white transition">Каталог</a>
+                <a href="#advantages" class="hover:text-white transition">Переваги</a>
+                <a href="#tradein" class="hover:text-white transition">Trade-In</a>
+                <a href="#contacts" class="hover:text-white transition">Контакти</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-slate-200"></i>
+                    <span class="hidden sm:inline text-xs font-semibold">Кошик</span>
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-blue-600 text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-md">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-6 uppercase tracking-wider">
+                <i class="fa-solid fa-fire text-amber-400"></i> Актуальная линейка iPhone
+            </div>
+            
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 max-w-4xl mx-auto leading-tight">
+                Будущее у тебя в руках. <br>
+                <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">iPhone Duo, 18 Pro, Air и другие</span>
+            </h1>
+            
+            <p class="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-10 font-normal">
+                Выбирайте iPhone из актуальной линейки Apple. Цена в каталоге включает расчётную наценку 20%.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#catalog" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition duration-300 flex items-center justify-center gap-3">
+                    <span>Смотреть каталог</span>
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+                <a href="#tradein" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-semibold transition duration-300 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate text-blue-400"></i>
+                    <span>Оценить старый телефон (Trade-In)</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <section id="catalog" class="py-20 bg-[#0d0d10] border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Каталог iPhone</h2>
+                    <p class="text-slate-400">Новые модели Apple с прозрачным расчётом цены</p>
+                </div>
+
+                <div class="flex items-center gap-2 p-1.5 bg-cardDark rounded-2xl border border-white/10 self-start md:self-auto overflow-x-auto max-w-full">
+                    <button onclick="filterProducts('all')" id="tab-all" class="px-5 py-2.5 rounded-xl text-sm font-medium transition bg-blue-600 text-white shadow-md">Все модели</button>
+                    <button onclick="filterProducts('18')" id="tab-18" class="px-5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white">iPhone 18</button>
+                    <button onclick="filterProducts('17')" id="tab-17" class="px-5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white">iPhone 17</button>
+                    <button onclick="filterProducts('16')" id="tab-16" class="px-5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white">iPhone 16</button>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-500 mb-6">Расчёт: цена Apple Store Ireland × курс ЦБ РФ 90,2429 ₽/€ (актуален на 26.10.2026) × 1,20. Округление до 100 ₽. <a class="text-blue-400 underline" href="https://www.apple.com/ie/shop/buy-iphone" target="_blank" rel="noreferrer">Цены Apple</a> · <a class="text-blue-400 underline" href="https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.VAL_NM_RQ=R01239" target="_blank" rel="noreferrer">курс ЦБ</a>. Это расчётная цена магазина, а не цена Apple. Фотографии загружаются с официальных страниц Apple.</p>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section id="advantages" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Покупка без лишних вопросов</h2>
+                <p class="text-slate-400">Поддержка на каждом этапе покупки</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-8 rounded-3xl bg-cardDark border border-white/10 hover:border-blue-500/50 transition duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-2xl mb-6">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Гарантия 1 год</h3>
+                    <p class="text-slate-400 leading-relaxed">Гарантия на устройство 12 месяцев. Условия уточняйте у менеджера.</p>
+                </div>
+
+                <div class="p-8 rounded-3xl bg-cardDark border border-white/10 hover:border-blue-500/50 transition duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-2xl mb-6">
+                        <i class="fa-solid fa-rotate"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Обмен Trade-In</h3>
+                    <p class="text-slate-400 leading-relaxed">Оценим старый iPhone и рассчитаем доплату за новую модель.</p>
+                </div>
+
+                <div class="p-8 rounded-3xl bg-cardDark border border-white/10 hover:border-blue-500/50 transition duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl mb-6">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Доставка с проверкой</h3>
+                    <p class="text-slate-400 leading-relaxed">Согласуем удобный способ доставки и поможем проверить заказ при получении.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trade-In Widget Section -->
+    <section id="tradein" class="py-20 bg-gradient-to-b from-[#0a0a0c] to-[#121216] border-t border-white/5">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="p-8 sm:p-12 rounded-3xl bg-cardDark border border-white/10 relative overflow-hidden shadow-2xl">
+                <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+                
+                <div class="text-center max-w-xl mx-auto mb-8">
+                    <div class="inline-block px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold mb-3">ПРЕДВАРИТЕЛЬНАЯ ОЦЕНКА</div>
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-2">Калькулятор Trade-In</h2>
+                    <p class="text-slate-400 text-sm">Узнайте ориентировочную скидку на новый iPhone</p>
+                </div>
+
+                <p class="text-xs text-slate-500 mb-5">Цифры в калькуляторе приведены для примера. Итоговую оценку состояния и стоимости подтвердит менеджер.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Модель вашего телефона</label>
+                        <select id="trade-model" class="w-full bg-[#0a0a0c] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+                            <option value="100000">iPhone 16 Pro Max — пример 100 000 ₽</option>
+                            <option value="85000">iPhone 16 Pro — пример 85 000 ₽</option>
+                            <option value="70000">iPhone 15 Pro Max — пример 70 000 ₽</option>
+                            <option value="55000">iPhone 14 Pro — пример 55 000 ₽</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Состояние аккумулятора</label>
+                        <select id="trade-battery" class="w-full bg-[#0a0a0c] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+                            <option value="1.0">Отличное (90–100%)</option>
+                            <option value="0.85">Хорошее (80–89%)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <div class="text-sm text-slate-400">Ориентировочная скидка:</div>
+                        <div id="trade-result" class="text-3xl font-extrabold text-blue-400 mt-1">100 000 ₽</div>
+                    </div>
+                    <button onclick="window.location.href='mailto:devideu@zohomail.eu?subject='+encodeURIComponent('Вопрос по Trade-In')" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition shadow-lg shadow-blue-600/20">
+                        Уточнить оценку
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacts" class="py-12 bg-appleDark border-t border-white/10 text-slate-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white">
+                    <i class="fa-brands fa-apple text-lg"></i>
+                </div>
+                <span class="text-lg font-bold text-white">AppleCore-Store</span>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <a href="mailto:devideu@zohomail.eu" aria-label="Написать AppleCore-Store" class="hover:text-white transition"><i class="fa-regular fa-envelope text-xl"></i><span class="ml-2 text-xs">devideu@zohomail.eu</span></a>
+            </div>
+
+            <div class="text-center md:text-right text-xs text-slate-500">
+                © 2026 AppleCore-Store. Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Product detail modal -->
+    <div id="product-detail-modal" class="fixed inset-0 z-[45] bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardDark border border-white/10 rounded-3xl max-w-4xl w-full p-5 sm:p-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
+            <button type="button" onclick="closeProductDetails()" aria-label="Закрыть карточку товара" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white"><i class="fa-solid fa-xmark"></i></button>
+            <div class="grid md:grid-cols-2 gap-7 pt-3">
+                <div>
+                    <div class="h-72 sm:h-96 rounded-2xl bg-[#0a0a0c] border border-white/10 flex items-center justify-center overflow-hidden"><img id="detail-photo" src="" alt="" class="w-full h-full object-contain p-4"></div>
+                    <div id="detail-thumbnails" class="flex justify-center gap-2 mt-3"></div>
+                </div>
+                <div class="pr-8 sm:pr-2">
+                    <span id="detail-badge" class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20"></span>
+                    <h2 id="detail-name" class="text-3xl font-bold text-white mt-3"></h2>
+                    <p id="detail-variant" class="text-sm text-blue-300 mt-2"></p>
+                    <p id="detail-description" class="text-slate-300 leading-relaxed mt-5"></p>
+                    <h3 class="text-lg font-bold text-white mt-6 mb-3">Характеристики</h3>
+                    <ul id="detail-specs" class="space-y-3 text-sm text-slate-300"></ul>
+                    <p id="detail-price" class="text-2xl font-extrabold text-white mt-6"></p>
+                    <button id="detail-add-to-cart" type="button" class="w-full mt-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold">Добавить выбранную конфигурацию в корзину</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex justify-end">
+        <div id="cart-content" class="w-full max-w-md bg-cardDark h-full flex flex-col border-l border-white/10 shadow-2xl transform translate-x-full transition-transform duration-300">
+            <div class="p-6 border-b border-white/10 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-bag-shopping text-blue-500 text-xl"></i>
+                    <h3 class="text-xl font-bold text-white">Ваша корзина</h3>
+                </div>
+                <button onclick="toggleCart()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+            <div class="p-6 border-t border-white/10 bg-[#0f0f13]">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-slate-400">Итого:</span>
+                    <span id="cart-total" class="text-2xl font-bold text-white">0 ₽</span>
+                </div>
+                <button onclick="checkout()" class="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Перейти к оформлению</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardDark border border-white/10 rounded-3xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
+            <button onclick="closeCheckoutModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-2 text-white">Контакты и доставка</h3>
+            <p class="text-slate-400 text-sm mb-6">Заполните данные получателя перед переходом к оплате</p>
+            
+            <form onsubmit="submitOrder(event)" class="space-y-4">
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">ФИО получателя</label>
+                        <input type="text" name="name" autocomplete="name" required class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm" placeholder="Имя и фамилия">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Телефон получателя</label>
+                        <input type="tel" name="phone" autocomplete="tel" required class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm" placeholder="+7...">
+                    </div>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-medium text-slate-300 mb-1">Страна</label><input type="text" name="country" autocomplete="country-name" required value="Россия" class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white text-sm"></div>
+                    <div><label class="block text-xs font-medium text-slate-300 mb-1">Регион / область</label><input type="text" name="region" autocomplete="address-level1" required class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white text-sm" placeholder="Например, Московская область"></div>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-medium text-slate-300 mb-1">Город / населённый пункт</label><input type="text" name="city" autocomplete="address-level2" required class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white text-sm" placeholder="Город"></div>
+                    <div><label class="block text-xs font-medium text-slate-300 mb-1">Индекс (если известен)</label><input type="text" name="postalCode" autocomplete="postal-code" class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white text-sm" placeholder="Почтовый индекс"></div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Способ доставки</label>
+                    <select name="deliveryMethod" id="delivery-method" required onchange="updateDeliveryAddressHint()" class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white text-sm">
+                        <option value="courier">Курьер до адреса</option>
+                        <option value="pickup">Пункт выдачи / постамат</option>
+                        <option value="postal">Почтовая или транспортная служба</option>
+                        <option value="pickup-shop">Самовывоз (место согласовать)</option>
+                    </select>
+                </div>
+                <div>
+                    <label id="delivery-address-label" class="block text-xs font-medium text-slate-300 mb-1">Адрес доставки</label>
+                    <textarea name="deliveryAddress" id="delivery-address" required rows="2" autocomplete="street-address" class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white text-sm" placeholder="Улица, дом, корпус, квартира"></textarea>
+                </div>
+                <div><label class="block text-xs font-medium text-slate-300 mb-1">Комментарий курьеру (необязательно)</label><input type="text" name="deliveryComment" class="w-full bg-appleDark border border-white/10 rounded-xl px-4 py-3 text-white text-sm" placeholder="Домофон, удобное время и т. п."></div>
+                <p class="text-xs text-amber-300">Стоимость и сроки доставки зависят от страны, региона, города и адреса. Итог подтвердим отдельно.</p>
+                <button type="submit" class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition mt-2">Перейти к оплате USDT</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Crypto payment instructions -->
+    <div id="payment-modal" class="fixed inset-0 z-[55] bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardDark border border-white/10 rounded-3xl max-w-2xl w-full p-5 sm:p-7 relative shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div class="flex items-start justify-between gap-4 mb-5">
+                <div><div class="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-2">Оплата криптовалютой</div><h3 class="text-2xl font-bold text-white">Оплатите заказ в USDT</h3><p class="text-slate-400 text-sm mt-1">Заказ <b id="payment-order-number" class="text-white"></b></p><p id="payment-delivery-summary" class="text-slate-300 text-xs mt-2 max-w-xl"></p></div>
+                <div class="text-right"><span class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-400/20 text-amber-300 text-xs">Ожидает оплаты</span><button type="button" onclick="cancelCryptoPayment()" class="block text-xs text-slate-400 hover:text-white underline mt-3 ml-auto">Отменить заказ</button></div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-5">
+                <div class="rounded-2xl bg-[#0a0a0c] border border-white/10 p-4 text-center">
+                    <label for="payment-network" class="block text-left text-sm text-slate-300 mb-2">Выберите сеть USDT</label>
+                    <select id="payment-network" onchange="updatePaymentNetwork()" class="w-full bg-cardDark border border-white/10 rounded-xl px-3 py-3 text-white mb-4">
+                        <option value="erc20">Ethereum (ERC-20)</option><option value="trc20">TRON (TRC-20)</option><option value="ton">TON</option><option value="near">NEAR</option><option value="bep20">BNB Smart Chain (BEP-20)</option><option value="arbitrum">Arbitrum</option><option value="polygon">Polygon</option>
+                    </select>
+                    <img id="payment-qr" src="payment/usdt-erc20.png" alt="QR-код адреса USDT" class="w-52 h-52 max-w-full object-contain rounded-xl mx-auto bg-black">
+                    <div id="payment-network-name" class="text-sm font-semibold text-white mt-3">Tether USDT ERC-20</div>
+                    <div class="text-xs text-slate-400 mt-1">Минимум: <span id="payment-minimum">0,01 USDT</span></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="rounded-2xl bg-[#0a0a0c] border border-white/10 p-4">
+                        <div class="text-xs text-slate-400 mb-1">К оплате ориентировочно</div>
+                        <div id="payment-amount" class="text-2xl font-extrabold text-emerald-400"></div>
+                        <div class="text-xs text-slate-400 mt-1">Сумма заказа в рублях: <span id="payment-rub-amount"></span></div>
+                        <p class="text-xs text-slate-500 mt-2">Ориентир: 1 USDT ≈ 1 USD, расчёт по курсу ЦБ 80,5381 ₽ за USD на 24.10.2026. Итоговую сумму и курс подтвердите у продавца перед отправкой.</p>
+                    </div>
+                    <div class="rounded-2xl bg-[#0a0a0c] border border-white/10 p-4">
+                        <div class="text-xs text-slate-400 mb-2">Адрес получателя</div>
+                        <code id="payment-address" class="block text-xs sm:text-sm text-white break-all leading-relaxed"></code>
+                        <button type="button" onclick="copyPaymentAddress()" class="mt-3 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm"><i class="fa-regular fa-copy mr-2"></i>Скопировать адрес</button>
+                        <div id="payment-memo-row" class="hidden mt-4 border-t border-white/10 pt-3"><div class="text-xs text-amber-300 mb-1">Обязательный комментарий / memo</div><code id="payment-memo" class="text-white font-bold"></code><button type="button" onclick="copyPaymentMemo()" class="ml-2 text-blue-400 text-xs underline">Скопировать</button></div>
+                    </div>
+                    <p class="text-xs text-amber-300">Отправляйте USDT только в выбранной сети. Для TON обязательно укажите memo. Для BEP-20 перевод меньше 5 USDT не зачисляется.</p>
+                </div>
+            </div>
+            <div class="mt-5 rounded-2xl bg-blue-500/5 border border-blue-400/20 p-4">
+                <label for="payment-proof" class="block text-sm font-semibold text-white mb-2">Прикрепите скриншот перевода</label>
+                <input id="payment-proof" type="file" accept="image/*" onchange="previewPaymentProof(event)" class="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white">
+                <p id="payment-proof-name" class="text-xs text-slate-400 mt-2">Файл обязателен для получения подтверждения заказа.</p>
+                <img id="payment-proof-preview" alt="Предпросмотр скриншота перевода" class="hidden max-h-40 mt-3 rounded-lg border border-white/10">
+            </div>
+            <p class="text-xs text-slate-500 mt-4">После прикрепления появится подтверждение с номером заказа. Оплата не проверяется автоматически, а файл остаётся в этом браузере: передайте его продавцу вручную только через Email. Почтовое приложение откроет письмо на devideu@zohomail.eu; скриншот нужно приложить вручную.</p>
+            <button type="button" onclick="confirmCryptoPayment()" class="w-full mt-4 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition">Я перевёл USDT — получить подтверждение</button>
+        </div>
+    </div>
+
+    <!-- Order Receipt -->
+    <div id="receipt-modal" class="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeReceipt()" aria-label="Закрыть чек" class="absolute top-5 right-5 w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600">×</button>
+            <div id="receipt-paper">
+                <div class="text-center border-b border-dashed border-slate-300 pb-5 mb-5">
+                    <div class="text-xs uppercase tracking-[.2em] text-blue-600 font-bold mb-2">AppleCore-Store</div>
+                    <h3 class="text-2xl font-extrabold">Чек заказа</h3>
+                    <p id="receipt-status" class="text-sm text-emerald-700 mt-2">Заказ принят и ожидает подтверждения</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-sm mb-5">
+                    <span class="text-slate-500">Номер заказа</span><b id="receipt-number" class="text-right"></b>
+                    <span class="text-slate-500">Дата</span><span id="receipt-date" class="text-right"></span>
+                    <span class="text-slate-500">Покупатель</span><span id="receipt-name" class="text-right"></span>
+                    <span class="text-slate-500">Телефон</span><span id="receipt-phone" class="text-right"></span>
+                    <span class="text-slate-500">Доставка</span><span id="receipt-delivery" class="text-right"></span>
+                    <span class="text-slate-500">Сеть оплаты</span><span id="receipt-network" class="text-right"></span>
+                    <span class="text-slate-500">Сумма USDT</span><span id="receipt-usdt-amount" class="text-right"></span>
+                    <span class="text-slate-500">Скриншот оплаты</span><span id="receipt-proof-name" class="text-right break-all"></span>
+                </div>
+                <div class="border-y border-dashed border-slate-300 py-4">
+                    <h4 class="font-bold mb-3">Позиции заказа</h4>
+                    <div id="receipt-items" class="space-y-3"></div>
+                </div>
+                <div class="flex justify-between text-lg font-extrabold pt-4"><span>Итого</span><span id="receipt-total"></span></div>
+                <p id="receipt-payment-status" class="text-xs text-amber-700 mt-4 font-semibold">Скриншот получен в этом браузере. Перевод ожидает ручной проверки продавцом.</p>
+                <p class="text-xs text-slate-500 mt-2">Это подтверждение заказа и приложенного скриншота, а не подтверждение поступления криптовалюты и не фискальный кассовый чек. Стоимость и сроки доставки зависят от региона и адреса.</p>
+                <img id="receipt-proof-preview" alt="Приложенный скриншот оплаты" class="hidden max-w-full max-h-64 mx-auto mt-4 rounded-lg border border-slate-200">
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3 mt-6">
+                <button onclick="printReceipt()" class="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold text-sm"><i class="fa-solid fa-print mr-2"></i>Распечатать чек</button>
+                <button onclick="sendOrderEmail()" class="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm"><i class="fa-regular fa-envelope mr-2"></i>Отправить по Email</button>
+            </div>
+            <p class="text-xs text-slate-500 text-center mt-3">Почтовое приложение откроет черновик для devideu@zohomail.eu. Нажмите «Отправить» и приложите скриншот вручную.</p>
+        </div>
+    </div>
+    <!-- App JavaScript -->
+    <script>
+        // Карточки каталога AppleCore-Store
+        const EUR_RUB = 90.2429;
+        const STORE_MARKUP = 1.2;
+        const USDT_RUB = 80.5381; // курс ЦБ USD/RUB на 24.10.2026, ориентир для расчёта USDT
+        const PAYMENT_NETWORKS = {
+            erc20: {name:'Tether USDT ERC-20', address:'0x060E71c163d00842897B8E7A5630deAb1344F279', qr:'payment/usdt-erc20.png', minimum:0.01},
+            trc20: {name:'Tether USDT TRC-20', address:'TRRzTGX8sb1kRBs7EqkgrDWGv29PGdvZjS', qr:'payment/usdt-trc20.png', minimum:0.01},
+            ton: {name:'Tether USDT TON', address:'EQBNY7a1Gsy107TX00hGBnM8YhpHQ6mAWljq2gICTuJ1SlxF', memo:'2162666292', qr:'payment/usdt-ton.png', minimum:0.01},
+            near: {name:'Tether USDT NEAR', address:'b77dae94dc7ff835ac0cb0e820f06e210b04e77988f06f091d42ad4dda0d22ae', qr:'payment/usdt-near.png', minimum:0.01},
+            bep20: {name:'Tether USDT BEP-20', address:'0x46408d59717b65c3D7bbE28DD224f9960c8c8071', qr:'payment/usdt-bep20.png', minimum:5},
+            arbitrum: {name:'Tether USDT ARB', address:'0xa69B2441939a454AF6792a347E21f81F55a5B601', qr:'payment/usdt-arbitrum.png', minimum:0.01},
+            polygon: {name:'Tether USDT POL', address:'0xa24c3405Cf2FA057eD90D3B4E9D6FD338a77Ee7b', qr:'payment/usdt-polygon.png', minimum:0.01}
+        };
+        const products = [
+            { id: 1, name: "iPhone Duo", type: "new", series: "18", badge: "Новинка", prices: {"256 ГБ":2369,"512 ГБ":2619,"1 ТБ":3119,"2 ТБ":3869}, colors: [{name:"Звёздно-белый",hex:"#e7e5dc"},{name:"Ночное небо",hex:"#343943"}], description:'Складная модель с большим внутренним экраном и внешним дисплеем — для общения, видео и удобной работы в нескольких приложениях.', fullDescription:'Складной iPhone с внутренним дисплеем 7,6″ и внешним дисплеем 5,4″. В раскрытом виде удобно смотреть видео и работать с несколькими приложениями, а в сложенном — пользоваться телефоном одной рукой. Чип A20 Pro и двойная система Fusion 48 Мп рассчитаны на повседневные задачи, съёмку и развлечения.', specs:["Дисплеи: 7,6″ внутренний и 5,4″ внешний","Чип: A20 Pro","Камеры: двойная система Fusion 48 Мп","Воспроизведение видео: до 44 часов"], images:["https://www.apple.com/v/iphone-duo/a/images/overview/product-stories/versatility/hero__dbnzxlb3ia2q_large.jpg","https://www.apple.com/v/iphone-duo/a/images/overview/camera/hero_right__gk9rwhz4kdqq_large.jpg","https://www.apple.com/euro/iphone-duo/a/screens_alt/images/overview/camera/hero_left__cpq2rhkwqzqu_large.jpg"] },
+            { id: 2, name: "iPhone 18 Pro Max", type: "new", series: "18", badge: "Pro Max", prices: {"256 ГБ":1639,"512 ГБ":1889,"1 ТБ":2389,"2 ТБ":3139}, colors: [{name:"Бургунди",hex:"#643840"},{name:"Ледяной",hex:"#c8d8e4"},{name:"Серебристый",hex:"#d9d9d7"},{name:"Чёрный",hex:"#252629"}], description:'Флагман с крупным дисплеем и профессиональной камерой — для съёмки, игр и долгой работы без подзарядки.', fullDescription:'Флагманская модель с дисплеем Super Retina XDR 6,9″, чипом A20 Pro и профессиональной системой камер Fusion 48 Мп. Большой экран подходит для видео, игр и работы с контентом. Заявленное время воспроизведения видео — до 45 часов.', specs:["Дисплей: 6,9″ Super Retina XDR","Чип: A20 Pro","Камеры: Pro Fusion 48 Мп","Воспроизведение видео: до 45 часов"], images:["https://www.apple.com/v/iphone-18-pro/a/images/overview/upgrader/main_camera__dcm72wfqflm6_large.jpg","https://www.apple.com/v/iphone-18-pro/a/images/overview/upgrader/front_camera__c533i0c3mh4y_large.jpg","https://www.apple.com/euro/iphone-18-pro/a/screens_alt/images/overview/upgrader/ceramic_shield__fxursmibzv2a_large.jpg"] },
+            { id: 3, name: "iPhone 18 Pro", type: "new", series: "18", badge: "Хит", prices: {"256 ГБ":1489,"512 ГБ":1739,"1 ТБ":2239,"2 ТБ":2989}, colors: [{name:"Бургунди",hex:"#643840"},{name:"Ледяной",hex:"#c8d8e4"},{name:"Серебристый",hex:"#d9d9d7"},{name:"Чёрный",hex:"#252629"}], description:'Мощный Pro в более компактном корпусе: яркий дисплей, передовые камеры и высокая производительность.', fullDescription:'Профессиональные возможности в корпусе с дисплеем Super Retina XDR 6,3″. Чип A20 Pro и система камер Pro Fusion 48 Мп подойдут для съёмки, игр и ресурсоёмких приложений. Воспроизведение видео — до 36 часов.', specs:["Дисплей: 6,3″ Super Retina XDR","Чип: A20 Pro","Камеры: Pro Fusion 48 Мп","Воспроизведение видео: до 36 часов"], images:["https://www.apple.com/v/iphone-18-pro/a/images/overview/upgrader/main_camera__dcm72wfqflm6_large.jpg","https://www.apple.com/v/iphone-18-pro/a/images/overview/upgrader/front_camera__c533i0c3mh4y_large.jpg","https://www.apple.com/euro/iphone-18-pro/a/screens_alt/images/overview/upgrader/ceramic_shield__fxursmibzv2a_large.jpg"] },
+            { id: 4, name: "iPhone Air", type: "new", series: "17", badge: "Тонкий корпус", prices: {"256 ГБ":1339,"512 ГБ":1589,"1 ТБ":2089}, colors: [{name:"Голубой",hex:"#a9c7dc"},{name:"Светлое золото",hex:"#dfd3b3"},{name:"Облачный белый",hex:"#ecece8"},{name:"Чёрный",hex:"#252629"}], description:'Лёгкий и тонкий iPhone с большим экраном и производительным чипом — для тех, кто ценит минимальный вес.', fullDescription:'Тонкая и лёгкая модель с дисплеем Super Retina XDR 6,5″ и корпусом толщиной 5,6 мм. Чип A19 Pro обеспечивает производительность для повседневных задач и приложений, а камера Fusion 48 Мп позволяет снимать фото и видео.', specs:["Дисплей: 6,5″ Super Retina XDR","Толщина: 5,6 мм","Чип: A19 Pro","Камера: Fusion 48 Мп"], images:["https://www.apple.com/v/iphone-air/i/images/overview/camera/camera__gl56mvovq6qi_large.jpg","https://www.apple.com/v/iphone-air/i/images/overview/camera/front_rear_video_screen__e158w8wmdfu6_large.jpg","https://www.apple.com/v/iphone-air/i/images/overview/camera/stabilized_video_screen__dsjqs2env3ki_large.jpg"] },
+            { id: 5, name: "iPhone 17", type: "new", series: "17", badge: "Новинка", prices: {"256 ГБ":1129,"512 ГБ":1379}, colors: [{name:"Туманно-голубой",hex:"#9bb8cf"},{name:"Лавандовый",hex:"#c7b7d8"},{name:"Шалфейный",hex:"#a5b09a"},{name:"Белый",hex:"#f2f1ed"},{name:"Чёрный",hex:"#252629"}], description:'Универсальная модель на каждый день с ярким дисплеем, быстрым чипом и системой камер Fusion.', fullDescription:'Универсальный iPhone с дисплеем Super Retina XDR 6,3″, чипом A19 и системой Dual Fusion 48 Мп. Подойдёт для общения, приложений, игр и съёмки. Заявленное время воспроизведения видео — до 30 часов.', specs:["Дисплей: 6,3″ Super Retina XDR","Чип: A19","Камеры: Dual Fusion 48 Мп","Воспроизведение видео: до 30 часов"], images:["https://www.apple.com/v/iphone-17/i/images/overview/welcome/hero_startframe__e9e7pcnguyqi_xlarge.jpg","https://www.apple.com/v/iphone-17/i/images/overview/highlights/cameras/cameras__bp927f4j5vqu_large.png","https://www.apple.com/euro/iphone-17/a/screens_alt/images/overview/highlights/ceramic-shield/highlights_ceramic_shield_endframe__b8x1kxkbto6a_large.jpg"] },
+            { id: 6, name: "iPhone 17e", type: "new", series: "17", badge: "Доступный", prices: {"256 ГБ":879,"512 ГБ":1129}, colors: [{name:"Мягкий розовый",hex:"#e8c8cf"},{name:"Белый",hex:"#f2f1ed"},{name:"Чёрный",hex:"#252629"}], description:'Практичный iPhone с чипом A19 и камерой Fusion — основные возможности Apple в доступной модели.', fullDescription:'Практичная модель с дисплеем Super Retina XDR 6,1″, чипом A19 и камерой Fusion 48 Мп. Подходит для повседневного использования, фото и видео. Заявленное время воспроизведения видео — до 26 часов.', specs:["Дисплей: 6,1″ Super Retina XDR","Чип: A19","Камера: Fusion 48 Мп","Воспроизведение видео: до 26 часов"], images:["https://www.apple.com/euro/iphone-17e/a/screens_alt/images/overview/welcome/hero_endframe__eafizd06t6qa_large.jpg","https://www.apple.com/euro/iphone-17e/a/screens_alt/images/overview/highlights/highlights_design_endframe__crx8inqsi8k2_large.jpg","https://www.apple.com/euro/iphone-17e/a/screens_alt/images/overview/highlights/highlights_magsafe_endframe__ec0sz2qsgt4y_large.jpg"] },
+            { id: 7, name: "iPhone 16", type: "new", series: "16", badge: "Проверенная модель", prices: {"128 ГБ":1029}, colors: [{name:"Чёрный",hex:"#252629"},{name:"Розовый",hex:"#e8c8cf"},{name:"Бирюзовый",hex:"#83b7b1"},{name:"Ультрамарин",hex:"#4168a3"},{name:"Белый",hex:"#f2f1ed"}], description:'Проверенная модель с чипом A18, OLED-дисплеем и универсальной системой камер для повседневных задач.', fullDescription:'iPhone с OLED-дисплеем 6,1″, чипом A18 и системой камер Fusion 48 Мп и Ultra Wide. Подходит для повседневных задач, съёмки и развлечений. Заявленное время воспроизведения видео — до 22 часов.', specs:["Дисплей: 6,1″ OLED","Чип: A18","Камеры: Fusion 48 Мп + Ultra Wide","Воспроизведение видео: до 22 часов"], images:["https://www.apple.com/newsroom/images/2024/09/apple-introduces-iphone-16-and-iphone-16-plus/article/geo/Apple-iPhone-16-hero-geo-240909_inline.jpg.large.jpg","https://www.apple.com/newsroom/images/2024/09/apple-introduces-iphone-16-and-iphone-16-plus/article/geo/Apple-iPhone-16-lineup-geo-240909_big.jpg.large.jpg","https://www.apple.com/newsroom/images/2024/09/apple-introduces-iphone-16-and-iphone-16-plus/article/geo/Apple-iPhone-16-finish-lineup-geo-240909_big.jpg.large.jpg"] }
+        ];
+
+        let cart = [];
+
+        function priceInRub(euro) { return Math.round(euro * EUR_RUB * STORE_MARKUP / 100) * 100; }
+        function formatRub(value) { return new Intl.NumberFormat('ru-RU').format(value) + ' ₽'; }
+        function selectProductPhoto(productId, imageIndex) {
+            const product = products.find(item => item.id === productId);
+            const image = document.getElementById(`product-photo-${productId}`);
+            if (!product || !image || !product.images[imageIndex]) return;
+            image.src = product.images[imageIndex];
+            product.images.forEach((_, index) => {
+                const button = document.getElementById(`photo-thumb-${productId}-${index}`);
+                if (button) button.classList.toggle('border-blue-500', index === imageIndex);
+                if (button) button.classList.toggle('border-white/10', index !== imageIndex);
+            });
+        }
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? products : products.filter(p => p.series === filter);
+            filtered.forEach(p => {
+                const defaultStorage = Object.keys(p.prices)[0];
+                const defaultColor = p.colors[0].name;
+                const euro = p.prices[defaultStorage];
+                const card = document.createElement('div');
+                card.className = 'product-card bg-cardDark rounded-3xl border border-white/10 p-6 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">${p.badge}</span>
+                            <span class="text-xs text-slate-400 font-medium" id="storage-label-${p.id}">${defaultStorage}</span>
+                        </div>
+                        <div class="relative w-full h-56 mb-6 rounded-2xl bg-[#0a0a0c] flex items-center justify-center overflow-hidden border border-white/5">
+                            <img id="product-photo-${p.id}" src="${p.images[0]}" alt="${p.name}" class="object-contain w-full h-full p-3 transition duration-300" loading="lazy" onerror="this.src='https://placehold.co/400x400/141418/ffffff?text=Apple+iPhone'">
+                        </div>
+                        <div class="flex justify-center gap-2 -mt-3 mb-5">${p.images.map((src, index) => `<button id="photo-thumb-${p.id}-${index}" type="button" onclick="selectProductPhoto(${p.id}, ${index})" aria-label="Фото ${index + 1} модели ${p.name}" class="w-12 h-12 rounded-lg overflow-hidden border ${index === 0 ? 'border-blue-500' : 'border-white/10'} bg-[#0a0a0c] hover:border-blue-400 transition"><img src="${src}" alt="" class="w-full h-full object-contain" loading="lazy"></button>`).join('')}</div>
+                        <h3 class="text-xl font-bold text-white mb-2">${p.name}</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed mb-3">${p.description}</p>
+                        <button type="button" onclick="openProductDetails(${p.id})" class="text-sm text-blue-400 hover:text-blue-300 underline underline-offset-4 mb-4">Подробнее о модели</button>
+                        <p class="text-xs text-slate-400 mb-4">${p.specs[0]}</p>
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between text-xs text-slate-400 mb-2"><span>Цвет</span><span id="color-label-${p.id}">${defaultColor}</span></div>
+                            <input type="hidden" id="color-${p.id}" value="${defaultColor}">
+                            <div class="flex gap-2 flex-wrap">${p.colors.map((c,i)=>`<button type="button" title="${c.name}" aria-label="${c.name}" onclick="chooseColor(${p.id},${i},this)" class="color-swatch w-7 h-7 rounded-full border-2 ${i===0?'border-blue-400':'border-white/20'}" style="background:${c.hex}"></button>`).join('')}</div>
+                        </div>
+                        <label class="block text-xs text-slate-400 mb-2" for="memory-${p.id}">Память</label>
+                        <select id="memory-${p.id}" onchange="updateVariant(${p.id})" class="w-full mb-4 bg-[#0a0a0c] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">${Object.keys(p.prices).map(v=>`<option value="${v}" ${v===defaultStorage?'selected':''}>${v}</option>`).join('')}</select>
+                        <details class="text-xs text-slate-400 border-t border-white/10 pt-3 mb-4"><summary class="cursor-pointer hover:text-white">Характеристики</summary><ul class="mt-3 space-y-2">${p.specs.map(s=>`<li>• ${s}</li>`).join('')}</ul></details>
+                    </div>
+                    <div>
+                        <div class="flex items-baseline gap-2 mb-1"><span id="price-${p.id}" class="text-2xl font-extrabold text-white">${formatRub(priceInRub(euro))}</span></div>
+                        <p id="euro-${p.id}" class="text-xs text-slate-500 mb-4">Apple Store: €${euro.toLocaleString('en-IE')} · +20%</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="addToCart(${p.id})" class="py-3 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-xs transition flex items-center justify-center gap-2"><i class="fa-solid fa-cart-plus"></i> В корзину</button>
+                            <button onclick="buyOneClick(${p.id})" class="py-3 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow-md shadow-blue-600/20 flex items-center justify-center gap-1">Купить</button>
+                        </div>
+                    </div>`;
+                grid.appendChild(card);
+            });
+        }
+        let activeDetailProductId = null;
+        function openProductDetails(productId) {
+            const product = products.find(item => item.id === productId);
+            if (!product) return;
+            activeDetailProductId = productId;
+            const chosenImage = document.getElementById(`product-photo-${productId}`);
+            document.getElementById('detail-photo').src = chosenImage ? chosenImage.src : product.images[0];
+            document.getElementById('detail-photo').alt = product.name;
+            document.getElementById('detail-badge').textContent = product.badge;
+            document.getElementById('detail-name').textContent = product.name;
+            document.getElementById('detail-description').textContent = product.fullDescription || product.description;
+            const storageSelect = document.getElementById(`memory-${productId}`);
+            const storage = storageSelect ? storageSelect.value : Object.keys(product.prices)[0];
+            const colorInput = document.getElementById(`color-${productId}`);
+            const color = colorInput ? colorInput.value : product.colors[0].name;
+            document.getElementById('detail-variant').textContent = `Выбрано: ${color} · ${storage}`;
+            document.getElementById('detail-price').textContent = formatRub(priceInRub(product.prices[storage]));
+            document.getElementById('detail-specs').innerHTML = product.specs.map(spec => `<li class="flex gap-2"><span class="text-blue-400">•</span><span>${spec}</span></li>`).join('');
+            document.getElementById('detail-thumbnails').innerHTML = product.images.map((src,index) => `<button type="button" onclick="selectDetailPhoto(${index})" aria-label="Фото ${index+1} ${product.name}" class="w-14 h-14 rounded-lg overflow-hidden border ${index===0?'border-blue-500':'border-white/10'} bg-[#0a0a0c]"><img src="${src}" alt="" class="w-full h-full object-contain"></button>`).join('');
+            document.getElementById('detail-add-to-cart').onclick = () => { closeProductDetails(); addToCart(productId); };
+            const modal = document.getElementById('product-detail-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
+        }
+        function selectDetailPhoto(index) {
+            const product = products.find(item => item.id === activeDetailProductId);
+            if (!product || !product.images[index]) return;
+            document.getElementById('detail-photo').src = product.images[index];
+            document.querySelectorAll('#detail-thumbnails button').forEach((button,i) => {
+                button.classList.toggle('border-blue-500',i===index); button.classList.toggle('border-white/10',i!==index);
+            });
+        }
+        function closeProductDetails() {
+            const modal = document.getElementById('product-detail-modal'); modal.classList.add('hidden'); modal.classList.remove('flex');
+        }
+
+        function chooseColor(productId, colorIndex, button) {
+            const product = products.find(p => p.id === productId);
+            document.getElementById(`color-${productId}`).value = product.colors[colorIndex].name;
+            document.getElementById(`color-label-${productId}`).textContent = product.colors[colorIndex].name;
+            button.parentElement.querySelectorAll('.color-swatch').forEach(b => { b.classList.remove('border-blue-400'); b.classList.add('border-white/20'); });
+            button.classList.remove('border-white/20'); button.classList.add('border-blue-400');
+        }
+        function updateVariant(productId) {
+            const product = products.find(p => p.id === productId);
+            const storage = document.getElementById(`memory-${productId}`).value;
+            const euro = product.prices[storage];
+            document.getElementById(`storage-label-${productId}`).textContent = storage;
+            document.getElementById(`price-${productId}`).textContent = formatRub(priceInRub(euro));
+            document.getElementById(`euro-${productId}`).textContent = `Apple Store: €${euro.toLocaleString('en-IE')} · +20%`;
+        }
+
+        function filterProducts(type) {
+            ['all', '18', '17', '16'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === type) {
+                    btn.className = "px-5 py-2.5 rounded-xl text-sm font-medium transition bg-blue-600 text-white shadow-md";
+                } else {
+                    btn.className = "px-5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white";
+                }
+            });
+            renderProducts(type);
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            const content = document.getElementById('cart-content');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('translate-x-full');
+                }, 10);
+                renderCartItems();
+            } else {
+                modal.classList.add('opacity-0');
+                content.classList.add('translate-x-full');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const storage = document.getElementById(`memory-${productId}`).value;
+            const color = document.getElementById(`color-${productId}`).value;
+            const euro = product.prices[storage];
+            const variantKey = `${productId}|${storage}|${color}`;
+            const existing = cart.find(item => item.variantKey === variantKey);
+            if (existing) existing.quantity += 1;
+            else cart.push({ ...product, storage, color, euro, price: priceInRub(euro), variantKey, quantity: 1 });
+            updateCartBadge();
+            showToast(`${product.name} · ${storage} · ${color} добавлен в корзину!`);
+        }
+
+        function updateCartBadge() {
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-badge').innerText = totalCount;
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-16 text-slate-500"><i class="fa-solid fa-bag-shopping text-4xl mb-3 opacity-30"></i><p class="text-sm">Корзина пока пуста</p></div>`;
+                document.getElementById('cart-total').innerText = '0 ₽';
+                return;
+            }
+
+            let totalPrice = 0;
+            cart.forEach((item, index) => {
+                totalPrice += item.price * item.quantity;
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between gap-4 p-4 rounded-2xl bg-[#0a0a0c] border border-white/5';
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${item.images[0]}" alt="${item.name}" class="w-12 h-12 rounded-xl object-contain bg-[#0a0a0c] border border-white/5">
+                        <div>
+                            <h4 class="text-sm font-bold text-white">${item.name}</h4>
+                            <p class="text-xs text-slate-400">${item.storage} • ${item.color} • ${formatRub(item.price)}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-xs font-bold text-white">${item.quantity} шт.</div>
+                        <button onclick="removeFromCart(${index})" class="text-slate-500 hover:text-red-400 transition p-1"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('cart-total').innerText = totalPrice.toLocaleString() + ' ₽';
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            renderCartItems();
+        }
+
+        function buyOneClick(productId) {
+            addToCart(productId);
+            toggleCart();
+        }
+
+        function updateDeliveryAddressHint() {
+            const method = document.getElementById('delivery-method').value;
+            const label = document.getElementById('delivery-address-label');
+            const input = document.getElementById('delivery-address');
+            const hints = {
+                courier:['Адрес доставки','Улица, дом, корпус, квартира'],
+                pickup:['Адрес или название пункта выдачи','Укажите пункт выдачи или постамат'],
+                postal:['Адрес получателя','Улица, дом, квартира; проверьте индекс'],
+                'pickup-shop':['Место самовывоза','Напишите «согласовать с менеджером» или желаемую точку']
+            };
+            [label.textContent,input.placeholder] = hints[method] || hints.courier;
+        }
+        function checkout() {
+            if (cart.length === 0) return;
+            toggleCart();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            document.getElementById('checkout-modal').classList.add('flex');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        let latestOrder = null;
+        let pendingOrder = null;
+        let paymentProofData = '';
+        function submitOrder(e) {
+            e.preventDefault();
+            if (!cart.length) return;
+            const form = new FormData(e.target);
+            const now = new Date();
+            const datePart = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            const randomPart = Math.floor(10000000 + Math.random() * 90000000);
+            const id = `ACS-${datePart}-${randomPart}`;
+            const items = cart.map(item => ({ name:item.name, storage:item.storage, color:item.color, quantity:item.quantity, price:item.price }));
+            const total = items.reduce((sum,item) => sum + item.quantity * item.price, 0);
+            const deliveryMethod = e.target.elements.deliveryMethod;
+            const deliveryParts = [
+                `Способ: ${deliveryMethod.options[deliveryMethod.selectedIndex].text}`,
+                `Страна: ${String(form.get('country')||'')}`,
+                `Регион: ${String(form.get('region')||'')}`,
+                `Город: ${String(form.get('city')||'')}`,
+                form.get('postalCode') ? `Индекс: ${String(form.get('postalCode'))}` : '',
+                `Адрес / пункт выдачи: ${String(form.get('deliveryAddress')||'')}`,
+                form.get('deliveryComment') ? `Комментарий курьеру: ${String(form.get('deliveryComment'))}` : ''
+            ].filter(Boolean);
+            const delivery = deliveryParts.join('; ');
+            const order = { id, createdAt:now.toLocaleString('ru-RU'), name:String(form.get('name')||''), phone:String(form.get('phone')||''), delivery, deliveryMethod:deliveryMethod.value, country:String(form.get('country')||''), region:String(form.get('region')||''), city:String(form.get('city')||''), postalCode:String(form.get('postalCode')||''), deliveryAddress:String(form.get('deliveryAddress')||''), deliveryComment:String(form.get('deliveryComment')||''), items, total };
+            const lines = items.map(item => `${item.name}, ${item.storage}, ${item.color} — ${item.quantity} × ${formatRub(item.price)}`).join(' | ');
+            order.message = `Заказ №${id} AppleCore-Store: ${lines}. Итого: ${formatRub(total)}. Получатель: ${order.name}. Телефон: ${order.phone}. Доставка: ${order.delivery}`;
+            pendingOrder = order;
+            cart = [];
+            updateCartBadge();
+            renderCartItems();
+            closeCheckoutModal();
+            document.getElementById('payment-order-number').textContent = id;
+            document.getElementById('payment-delivery-summary').textContent = `Получатель: ${order.name}, ${order.phone}. Доставка: ${order.delivery}`;
+            document.getElementById('payment-proof').value = '';
+            document.getElementById('payment-proof-preview').classList.add('hidden');
+            document.getElementById('payment-proof-name').textContent = 'Файл обязателен для получения подтверждения заказа.';
+            updatePaymentNetwork();
+            const paymentModal = document.getElementById('payment-modal');
+            paymentModal.classList.remove('hidden'); paymentModal.classList.add('flex');
+        }
+        function formatUSDT(value) { return Number(value).toFixed(2); }
+        function updatePaymentNetwork() {
+            const key = document.getElementById('payment-network').value;
+            const network = PAYMENT_NETWORKS[key];
+            document.getElementById('payment-qr').src = network.qr;
+            document.getElementById('payment-network-name').textContent = network.name;
+            document.getElementById('payment-address').textContent = network.address;
+            document.getElementById('payment-minimum').textContent = `${formatUSDT(network.minimum)} USDT`;
+            const memoRow = document.getElementById('payment-memo-row');
+            memoRow.classList.toggle('hidden', !network.memo);
+            if (network.memo) document.getElementById('payment-memo').textContent = network.memo;
+            if (pendingOrder) {
+                document.getElementById('payment-rub-amount').textContent = formatRub(pendingOrder.total);
+                document.getElementById('payment-amount').textContent = `${formatUSDT(pendingOrder.total / USDT_RUB)} USDT`;
+            }
+        }
+        function cancelCryptoPayment() {
+            if (!confirm('Отменить этот заказ?')) return;
+            pendingOrder = null;
+            paymentProofData = '';
+            const modal = document.getElementById('payment-modal'); modal.classList.add('hidden'); modal.classList.remove('flex');
+            showToast('Заказ отменён');
+        }
+        async function copyPaymentAddress() {
+            try { await navigator.clipboard.writeText(document.getElementById('payment-address').textContent); showToast('Адрес скопирован'); }
+            catch (_) { showToast('Не удалось скопировать. Выделите адрес и скопируйте вручную.'); }
+        }
+        async function copyPaymentMemo() {
+            try { await navigator.clipboard.writeText(document.getElementById('payment-memo').textContent); showToast('Memo скопирован'); }
+            catch (_) { showToast('Не удалось скопировать. Перепишите memo вручную.'); }
+        }
+        function previewPaymentProof(event) {
+            const file = event.target.files && event.target.files[0];
+            const preview = document.getElementById('payment-proof-preview');
+            paymentProofData = '';
+            if (!file) { preview.classList.add('hidden'); return; }
+            if (!file.type.startsWith('image/')) { event.target.value = ''; showToast('Прикрепите изображение скриншота.'); return; }
+            if (file.size > 8 * 1024 * 1024) { event.target.value = ''; showToast('Размер скриншота не должен превышать 8 МБ.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => { paymentProofData = String(reader.result); preview.src = paymentProofData; preview.classList.remove('hidden'); document.getElementById('payment-proof-name').textContent = `Прикреплён файл: ${file.name}`; };
+            reader.readAsDataURL(file);
+        }
+        function confirmCryptoPayment() {
+            if (!pendingOrder) return;
+            const file = document.getElementById('payment-proof').files[0];
+            if (!file || !paymentProofData) { showToast('Сначала прикрепите скриншот оплаты.'); return; }
+            const network = PAYMENT_NETWORKS[document.getElementById('payment-network').value];
+            const amount = pendingOrder.total / USDT_RUB;
+            if (amount < network.minimum) { showToast(`Минимум для выбранной сети: ${formatUSDT(network.minimum)} USDT.`); return; }
+            pendingOrder.paymentNetwork = network.name;
+            pendingOrder.paymentAddress = network.address;
+            pendingOrder.paymentMemo = network.memo || '';
+            pendingOrder.paymentAmount = formatUSDT(amount);
+            pendingOrder.proofName = file.name;
+            pendingOrder.proofData = paymentProofData;
+            pendingOrder.message += `. Оплата: ${pendingOrder.paymentAmount} USDT, ${network.name}. Скриншот: ${file.name} (прикрепите файл вручную к сообщению). Статус: ожидает ручной проверки.`;
+            latestOrder = pendingOrder;
+            pendingOrder = null;
+            const modal = document.getElementById('payment-modal'); modal.classList.add('hidden'); modal.classList.remove('flex');
+            showOrderReceipt(latestOrder);
+        }
+        function showOrderReceipt(order) {
+            document.getElementById('receipt-status').textContent = 'Скриншот получен, оплата ожидает ручной проверки';
+            document.getElementById('receipt-number').textContent = order.id;
+            document.getElementById('receipt-date').textContent = order.createdAt;
+            document.getElementById('receipt-name').textContent = order.name;
+            document.getElementById('receipt-phone').textContent = order.phone;
+            document.getElementById('receipt-delivery').textContent = order.delivery;
+            document.getElementById('receipt-network').textContent = order.paymentNetwork || '—';
+            document.getElementById('receipt-usdt-amount').textContent = order.paymentAmount ? `${order.paymentAmount} USDT (ориентировочно)` : '—';
+            document.getElementById('receipt-proof-name').textContent = order.proofName || '—';
+            document.getElementById('receipt-payment-status').textContent = `Ожидает ручной проверки. Сумма по ориентировочному курсу: ${order.paymentAmount} USDT.`;
+            const proofPreview = document.getElementById('receipt-proof-preview');
+            if (order.proofData) { proofPreview.src = order.proofData; proofPreview.classList.remove('hidden'); } else { proofPreview.classList.add('hidden'); }
+            document.getElementById('receipt-total').textContent = formatRub(order.total);
+            document.getElementById('receipt-items').innerHTML = order.items.map(item => `<div class="flex justify-between gap-4 text-sm"><span>${item.name}<small class="block text-slate-500">${item.storage} · ${item.color} · ${item.quantity} шт.</small></span><b class="whitespace-nowrap">${formatRub(item.price * item.quantity)}</b></div>`).join('');
+            document.getElementById('receipt-modal').classList.remove('hidden');
+            document.getElementById('receipt-modal').classList.add('flex');
+        }
+        function closeReceipt() {
+            const modal = document.getElementById('receipt-modal');
+            modal.classList.add('hidden'); modal.classList.remove('flex');
+        }
+        function sendOrderEmail() {
+            if (!latestOrder) return;
+            const o = latestOrder;
+            const subject = `Заказ AppleCore-Store №${o.id}`;
+            const body = `${o.message}\nСеть: ${o.paymentNetwork || '—'}\nСумма USDT: ${o.paymentAmount || '—'} (ориентировочно)\nСкриншот: ${o.proofName || 'не приложен'}. Прикрепите скриншот вручную к письму.\nСтатус оплаты: ожидает ручной проверки.`;
+            window.location.href = `mailto:devideu@zohomail.eu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+        function printReceipt() {
+            if (!latestOrder) return;
+            const o = latestOrder;
+            const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+            const rows = o.items.map(item => `<tr><td>${esc(item.name)}<br><small>${esc(item.storage)} · ${esc(item.color)} · ${item.quantity} шт.</small></td><td>${formatRub(item.price * item.quantity)}</td></tr>`).join('');
+            const printWindow = window.open('', '_blank', 'width=720,height=800');
+            if (!printWindow) { showToast('Разрешите всплывающее окно, чтобы распечатать чек.'); return; }
+            printWindow.document.write(`<!doctype html><html lang="ru"><meta charset="utf-8"><title>Чек заказа ${esc(o.id)}</title><style>body{font:15px Arial,sans-serif;max-width:620px;margin:40px auto;color:#111}header{text-align:center;border-bottom:1px dashed #888;padding-bottom:18px}table{width:100%;border-collapse:collapse;margin:22px 0}td{padding:12px 4px;border-bottom:1px solid #ddd}td:last-child{text-align:right;white-space:nowrap}small{color:#555}.meta{display:grid;grid-template-columns:130px 1fr;gap:10px;margin:20px 0}.total{border-top:1px dashed #888;padding-top:16px;text-align:right;font-size:20px;font-weight:bold}.note{font-size:12px;color:#555;margin-top:24px}</style><header><b>AppleCore-Store</b><h2>Чек заказа</h2><p>Скриншот получен, оплата ожидает ручной проверки</p></header><div class="meta"><span>Номер заказа</span><b>${esc(o.id)}</b><span>Дата</span><span>${esc(o.createdAt)}</span><span>Покупатель</span><span>${esc(o.name)}</span><span>Телефон</span><span>${esc(o.phone)}</span><span>Доставка</span><span>${esc(o.delivery)} (стоимость зависит от региона и адреса)</span><span>Сеть оплаты</span><span>${esc(o.paymentNetwork || '—')}</span><span>Сумма USDT</span><span>${esc(o.paymentAmount || '—')} (ориентировочно)</span><span>Скриншот</span><span>${esc(o.proofName || '—')}</span></div><table>${rows}</table><div class="total">Итого: ${formatRub(o.total)} · ${esc(o.paymentAmount || '')} USDT</div>${o.proofData ? `<p>Приложенный скриншот:</p><img src="${o.proofData}" style="max-width:100%;max-height:360px">` : ''}<p class="note">Подтверждение прикреплённого скриншота. Перевод ожидает ручной проверки и не подтверждён блокчейном. Это не фискальный кассовый чек. Скриншот автоматически продавцу не отправлен — прикрепите файл вручную к сообщению.</p></html>`);
+            printWindow.document.close(); printWindow.focus(); printWindow.print();
+        }
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3500);
+        }
+
+        document.getElementById('trade-model').addEventListener('change', calcTrade);
+        document.getElementById('trade-battery').addEventListener('change', calcTrade);
+        function calcTrade() {
+            const base = parseInt(document.getElementById('trade-model').value);
+            const koef = parseFloat(document.getElementById('trade-battery').value);
+            document.getElementById('trade-result').innerText = Math.round(base * koef).toLocaleString('ru-RU') + ' ₽';
+        }
+
+        window.onload = () => { renderProducts('all'); updateDeliveryAddressHint(); };
+    </script>
+</body>
+</html>
